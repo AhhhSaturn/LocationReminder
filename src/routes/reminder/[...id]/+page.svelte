@@ -2,7 +2,7 @@
 import ReminderIcon from "@lucide/svelte/icons/bell-dot";
 import MapIcon from "@lucide/svelte/icons/map-pin";
 import DeleteIcon from "@lucide/svelte/icons/trash-2";
-import { goto } from "$app/navigation";
+import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
 import * as InputGroup from "$lib/components/ui/input-group/index.js";
 import { deleteReminder, getReminder, saveReminder } from "$lib/store";
@@ -15,9 +15,10 @@ const reminder = $state(
 	}),
 );
 
-const save = async () => {
-	saveReminder(reminder.id, $state.snapshot(reminder));
-};
+beforeNavigate(async (nav) => {
+	if (nav.type !== "popstate") return;
+	await saveReminder(reminder.id, $state.snapshot(reminder));
+});
 </script>
 
 <InputGroup.Root class="h-full!">
@@ -35,8 +36,5 @@ const save = async () => {
     <InputGroup.Text>18 lant close</InputGroup.Text>
     <InputGroup.Button variant="secondary"><MapIcon/></InputGroup.Button>
     </div>
-    <InputGroup.Button onclick={save} size="sm" class="ms-auto" variant="default">
-    Save
-    </InputGroup.Button>
 </InputGroup.Addon>
 </InputGroup.Root>

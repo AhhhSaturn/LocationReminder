@@ -8,9 +8,10 @@ import { newReminder as createNewReminder, getReminders } from "$lib/store";
 
 const newReminder = () =>
 	createNewReminder().then((id) => goto(`/reminder/${id}`));
+
+const reminders = await getReminders();
 </script>
 
-{#await getReminders() then reminders}
 {#if reminders.length > 0}
     <main class="flex flex-col gap-3 h-full overflow-scroll">
     {#each reminders as reminder}
@@ -27,7 +28,6 @@ const newReminder = () =>
     </Empty.Content>
 </Empty.Root>
 {/if}
-{/await}
 
 <Button variant="outline" onclick={newReminder} class="bg-card rounded-4xl absolute bottom-5 right-5 w-14 h-14">
     <PlusIcon class="size-7"/>
