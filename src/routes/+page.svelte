@@ -4,7 +4,6 @@ import { goto } from "$app/navigation";
 import ReminderTile from "$lib/components/ReminderTile.svelte";
 import { Button } from "$lib/components/ui/button";
 import * as Empty from "$lib/components/ui/empty/index.js";
-import { getLoc } from "$lib/geo";
 import { newReminder as createNewReminder, getReminders } from "$lib/store";
 
 const newReminder = () =>
@@ -29,8 +28,6 @@ const newReminder = () =>
 </Empty.Root>
 {/if}
 {/await}
-
-<button onclick={getLoc}>meow</button>
 
 <Button variant="outline" onclick={newReminder} class="bg-card rounded-4xl absolute bottom-5 right-5 w-14 h-14">
     <PlusIcon class="size-7"/>
