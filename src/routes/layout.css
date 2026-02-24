@@ -134,3 +134,8 @@ body {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.pac-item,
+.pac-item span {
+    z-index: 10000 !important;
+}

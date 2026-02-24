@@ -2,26 +2,36 @@
 import ReminderIcon from "@lucide/svelte/icons/bell-dot";
 import MapIcon from "@lucide/svelte/icons/map-pin";
 import DeleteIcon from "@lucide/svelte/icons/trash-2";
+import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
+import LocationPicker from "$lib/components/LocationPicker.svelte";
+import { Button } from "$lib/components/ui/button";
+import * as Drawer from "$lib/components/ui/drawer/index.js";
 import * as InputGroup from "$lib/components/ui/input-group/index.js";
 import { deleteReminder, getReminder, saveReminder } from "$lib/store";
 import type { Reminder } from "$lib/types/store.type";
 
-const reminder = $state(
-	await getReminder(page.params.id as string).then((reminder) => {
+let reminder: Reminder | undefined = $state();
+
+onMount(async () => {
+	reminder = await getReminder(page.params.id as string).then((reminder) => {
 		if (!reminder) goto("/");
 		return reminder as Reminder;
-	}),
-);
+	});
+});
 
 beforeNavigate(async (nav) => {
 	if (nav.type !== "popstate") return;
 	await saveReminder(reminder.id, $state.snapshot(reminder));
 });
+
+let dialogOpen = $state(false);
 </script>
 
-<InputGroup.Root class="h-full!">
+
+{#if reminder}
+<InputGroup.Root class="h-[98%]!">
 <InputGroup.Addon align="block-start" class="border-b">
     <ReminderIcon />
     <InputGroup.Input class="border rounded-lg" placeholder="Reminder Title" bind:value={reminder.reminder.title} />
@@ -32,9 +42,20 @@ beforeNavigate(async (nav) => {
     bind:value={reminder.reminder.content}
 />
 <InputGroup.Addon align="block-end" class="border-t">
-    <div class="flex flex-row gap-2 border px-2 py-1 rounded-md">
-    <InputGroup.Text>18 lant close</InputGroup.Text>
-    <InputGroup.Button variant="secondary"><MapIcon/></InputGroup.Button>
-    </div>
+    <Drawer.Root bind:open={dialogOpen}>
+     <Drawer.Trigger class="w-full">
+         <Button variant="outline" class="w-full">
+            <InputGroup.Text ><MapIcon/></InputGroup.Text>
+            <InputGroup.Text>{reminder.location?.name}</InputGroup.Text>
+         </Button>
+     </Drawer.Trigger>
+     <Drawer.Content>
+      <Drawer.Header>
+        <Drawer.Title>Pick the reminder location</Drawer.Title>
+        <LocationPicker bind:location={reminder.location} bind:dialogOpen />
+      </Drawer.Header>
+     </Drawer.Content>
+    </Drawer.Root>
 </InputGroup.Addon>
 </InputGroup.Root>
+{/if}

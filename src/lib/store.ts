@@ -16,7 +16,7 @@ export const getReminder = async (
 	id: string,
 ): Promise<Reminder | undefined> => {
 	const store = await getStore;
-	return store.get(id);
+	return await store.get(id);
 };
 
 export const newReminder = async () => {

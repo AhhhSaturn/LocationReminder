@@ -1,0 +1,3 @@
+- confirm deletion.
+- completion button.
+-

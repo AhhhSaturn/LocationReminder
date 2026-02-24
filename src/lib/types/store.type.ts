@@ -2,7 +2,10 @@ export interface Reminder {
 	id: string;
 	location?: {
 		name: string;
-		data: string;
+		data: {
+			lng: number;
+			lat: number;
+		};
 	};
 	reminder: {
 		title: string;

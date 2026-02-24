@@ -4,14 +4,20 @@ import { goto } from "$app/navigation";
 import ReminderTile from "$lib/components/ReminderTile.svelte";
 import { Button } from "$lib/components/ui/button";
 import * as Empty from "$lib/components/ui/empty/index.js";
+import { startLocationWatcher } from "$lib/geo";
+import { schedule } from "$lib/notif";
 import { newReminder as createNewReminder, getReminders } from "$lib/store";
 
 const newReminder = () =>
 	createNewReminder().then((id) => goto(`/reminder/${id}`));
 
-const reminders = await getReminders();
+const reminders = getReminders();
 </script>
 
+<Button onclick={schedule}>Schedule</Button>
+<Button onclick={startLocationWatcher}>Location Watcher</Button>
+
+{#await reminders then reminders}
 {#if reminders.length > 0}
     <main class="flex flex-col gap-3 h-full overflow-scroll">
     {#each reminders as reminder}
@@ -28,6 +34,7 @@ const reminders = await getReminders();
     </Empty.Content>
 </Empty.Root>
 {/if}
+{/await}
 
 <Button variant="outline" onclick={newReminder} class="bg-card rounded-4xl absolute bottom-5 right-5 w-14 h-14">
     <PlusIcon class="size-7"/>
